@@ -1,10 +1,26 @@
 "use client";
+"use client";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import { pacientes } from "../../data/seed";
 import Link from "next/link";
+import type { PacienteVirtual } from "../../models/models";
 
 export default function PacientesPage() {
+  const [pacientes, setPacientes] = useState<PacienteVirtual[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/pacientes")
+      .then((res) => res.json())
+      .then((data) => {
+        setPacientes(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Carregando...</div>;
+
   return (
     <div className="flex h-screen">
       <Sidebar />

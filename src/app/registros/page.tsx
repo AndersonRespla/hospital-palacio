@@ -1,10 +1,26 @@
 "use client";
+"use client";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import { registros } from "../../data/seed";
 import Link from "next/link";
+import type { RegistroMedico } from "../../models/models";
 
 export default function RegistrosPage() {
+  const [registros, setRegistros] = useState<RegistroMedico[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/registros")
+      .then((res) => res.json())
+      .then((data) => {
+        setRegistros(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Carregando...</div>;
+
   return (
     <div className="flex h-screen">
       <Sidebar />

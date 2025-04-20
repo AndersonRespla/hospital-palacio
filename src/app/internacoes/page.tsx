@@ -1,10 +1,26 @@
 "use client";
+"use client";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import { internacoes } from "../../data/seed";
 import Link from "next/link";
+import type { Internacao } from "../../models/models";
 
 export default function InternacoesPage() {
+  const [internacoes, setInternacoes] = useState<Internacao[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/internacoes")
+      .then((res) => res.json())
+      .then((data) => {
+        setInternacoes(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Carregando...</div>;
+
   return (
     <div className="flex h-screen">
       <Sidebar />
