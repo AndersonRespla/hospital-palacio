@@ -1,4 +1,6 @@
 "use client";
+import React from "react";
+import useRequireAuth from "../../../hooks/useRequireAuth";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { pacientes } from "../../data/seed";
@@ -13,6 +15,8 @@ const data = [
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
 export default function FinanceiroPage() {
+  const status = useRequireAuth();
+  if (status === "loading") return <div>Validando sessão...</div>;
   const total = data.reduce((sum,d)=>sum+d.value,0);
   return (
     <div className="flex h-screen">

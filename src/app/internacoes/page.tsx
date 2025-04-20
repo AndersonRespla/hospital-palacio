@@ -1,12 +1,16 @@
 "use client";
 "use client";
-import { useState, useEffect } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import useRequireAuth from "../../../hooks/useRequireAuth";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import Link from "next/link";
 import type { Internacao } from "../../models/models";
 
 export default function InternacoesPage() {
+  const status = useRequireAuth();
+  if (status === "loading") return <div>Validando sessão...</div>;
   const [internacoes, setInternacoes] = useState<Internacao[]>([]);
   const [loading, setLoading] = useState(true);
 

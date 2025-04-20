@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import useRequireAuth from "../../../../hooks/useRequireAuth";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 
@@ -13,6 +14,8 @@ interface Registro {
 }
 
 export default function PacienteDetalhe() {
+  const status = useRequireAuth();
+  if (status === "loading") return <div>Validando sessão...</div>;
   const { id } = useParams();
   const [paciente, setPaciente] = useState<any>(null);
   const [registros, setRegistros] = useState<Registro[]>([]);
