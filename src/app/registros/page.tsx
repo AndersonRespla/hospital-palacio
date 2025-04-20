@@ -3,12 +3,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import useRequireAuth from "../../../hooks/useRequireAuth";
+import Modal from "../../components/Modal";
+import FormRegistro from "../../components/FormRegistro";
+import useRequireAuth from "../../hooks/useRequireAuth";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import type { RegistroMedico } from "../../models/models";
 
 export default function RegistrosPage() {
+  const [showCreate, setShowCreate] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [selected, setSelected] = useState<RegistroMedico | null>(null);
   const status = useRequireAuth();
   if (status === "loading") return <div>Validando sessão...</div>;
   const [items, setItems] = useState<RegistroMedico[]>([]);
@@ -36,7 +41,15 @@ export default function RegistrosPage() {
       <div className="flex-1 flex flex-col">
         <Header />
         <main className="p-4 overflow-auto">
-          <h1 className="text-xl font-bold mb-4">Registros Médicos</h1>
+          <div className="flex justify-between items-center mb-4">
+  <h1 className="text-xl font-bold">Registros Médicos</h1>
+  <button
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    onClick={() => setShowCreate(true)}
+  >
+    Novo Registro
+  </button>
+</div>
           <div className="mb-4">
             <input
               type="text"
@@ -67,9 +80,15 @@ export default function RegistrosPage() {
                     <Link href={`/registros/${idx}`} className="text-blue-600 hover:underline">
                       Ver
                     </Link>
-                    <Link href={`/registros/${idx}/edit`} className="text-green-600 hover:underline">
-                      Editar
-                    </Link>
+                    <button
+  className="text-green-600 hover:underline"
+  onClick={() => {
+    setSelected(r);
+    setShowEdit(true);
+  }}
+>
+  Editar
+</button>
                     <button
                       className="text-red-600 hover:underline"
                       onClick={async () => {

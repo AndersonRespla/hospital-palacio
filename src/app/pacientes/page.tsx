@@ -3,12 +3,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import useRequireAuth from "../../../hooks/useRequireAuth";
+import Modal from "../../components/Modal";
+import FormPaciente from "../../components/FormPaciente";
+import useRequireAuth from "../../hooks/useRequireAuth";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import type { PacienteVirtual } from "../../models/models";
 
 export default function PacientesPage() {
+  const [showCreate, setShowCreate] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [selected, setSelected] = useState<PacienteVirtual | null>(null);
   const status = useRequireAuth();
   if (status === "loading") return <div>Validando sessão...</div>;
   const [items, setItems] = useState<PacienteVirtual[]>([]);
@@ -36,7 +41,15 @@ export default function PacientesPage() {
       <div className="flex-1 flex flex-col">
         <Header />
         <main className="p-4 overflow-auto">
-          <h1 className="text-xl font-bold mb-4">Pacientes</h1>
+          <div className="flex justify-between items-center mb-4">
+  <h1 className="text-xl font-bold">Pacientes</h1>
+  <button
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    onClick={() => setShowCreate(true)}
+  >
+    Novo Paciente
+  </button>
+</div>
           <div className="mb-4">
             <input
               type="text"
@@ -67,9 +80,15 @@ export default function PacientesPage() {
                     <Link href={`/pacientes/${p.id}`} className="text-blue-600 hover:underline">
                       Ver
                     </Link>
-                    <Link href={`/pacientes/${p.id}/edit`} className="text-green-600 hover:underline">
-                      Editar
-                    </Link>
+                    <button
+  className="text-green-600 hover:underline"
+  onClick={() => {
+    setSelected(p);
+    setShowEdit(true);
+  }}
+>
+  Editar
+</button>
                     <button
                       className="text-red-600 hover:underline"
                       onClick={async () => {
