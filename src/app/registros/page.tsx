@@ -11,19 +11,24 @@ import type { RegistroMedico } from "../../models/models";
 export default function RegistrosPage() {
   const status = useRequireAuth();
   if (status === "loading") return <div>Validando sessão...</div>;
-  const [registros, setRegistros] = useState<RegistroMedico[]>([]);
+  const [items, setItems] = useState<RegistroMedico[]>([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/registros")
+    setLoading(true);
+    fetch(`/api/registros?page=${page}&limit=5&search=${encodeURIComponent(search)}`)
       .then((res) => res.json())
-      .then((data) => {
-        setRegistros(data);
+      .then(({ data, lastPage: lp }) => {
+        setItems(data);
+        setLastPage(lp);
         setLoading(false);
       });
-  }, []);
+  }, [page, search]);
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) return <div className="p-4">Carregando registros...</div>;
 
   return (
     <div className="flex h-screen">
@@ -32,36 +37,45 @@ export default function RegistrosPage() {
         <Header />
         <main className="p-4 overflow-auto">
           <h1 className="text-xl font-bold mb-4">Registros Médicos</h1>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Buscar por tipo ou autor..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="w-full border p-2 rounded"
+            />
+          </div>
           <table className="min-w-full table-auto border-collapse">
             <thead>
               <tr>
-                <th className="border p-2">Paciente</th>
                 <th className="border p-2">Data/Hora</th>
                 <th className="border p-2">Tipo</th>
                 <th className="border p-2">Autor</th>
                 <th className="border p-2">Conteúdo</th>
+                <th className="border p-2">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {registros.map((r, idx) => (
-                <tr key={idx} className="hover:bg-gray-100 cursor-pointer">
-                  <td className="border p-2">
-                    <Link href={`/registros/${r.internoId}`}>{r.internoId}</Link>
-                  </td>
-                  <td className="border p-2">{r.dataHora}</td>
+              {items.map((r, idx) => (
+                <tr key={idx} className="hover:bg-gray-100">
+                  <td className="border p-2">{new Date(r.dataHora).toLocaleString()}</td>
                   <td className="border p-2">{r.tipoRegistro}</td>
                   <td className="border p-2">{r.autor}</td>
-                  <td className="border p-2 text-xs whitespace-pre-wrap">{JSON.stringify(r.conteudo)}</td>
+                  <td className="border p-2">{JSON.stringify(r.conteudo)}</td>
                   <td className="border p-2 space-x-2">
-                    <Link href={`/registros/${r.internoId}/edit`} className="text-blue-600 hover:underline">
+                    <Link href={`/registros/${idx}`} className="text-blue-600 hover:underline">
+                      Ver
+                    </Link>
+                    <Link href={`/registros/${idx}/edit`} className="text-green-600 hover:underline">
                       Editar
                     </Link>
                     <button
                       className="text-red-600 hover:underline"
                       onClick={async () => {
                         if (confirm("Excluir registro?")) {
-                          await fetch(`/api/registros?id=${r.internoId}`, { method: "DELETE" });
-                          setRegistros(curr => curr.filter(x => x.internoId !== r.internoId));
+                          await fetch(`/api/registros/${idx}`, { method: "DELETE" });
+                          setItems(curr => curr.filter((_, i) => i !== idx));
                         }
                       }}
                     >
@@ -72,6 +86,23 @@ export default function RegistrosPage() {
               ))}
             </tbody>
           </table>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              onClick={() => setPage(p => Math.max(p - 1, 1))}
+              disabled={page === 1}
+            >
+              Anterior
+            </button>
+            <span>Página {page} de {lastPage}</span>
+            <button
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              onClick={() => setPage(p => Math.min(p + 1, lastPage))}
+              disabled={page === lastPage}
+            >
+              Próximo
+            </button>
+          </div>
         </main>
       </div>
     </div>
