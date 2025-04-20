@@ -39,14 +39,30 @@ export default function PacientesPage() {
             </thead>
             <tbody>
               {pacientes.map(p => (
-                <Link key={p.id} href={`/pacientes/${p.id}`} legacyBehavior>
-                  <tr className="hover:bg-gray-100 cursor-pointer">
-                    <td className="border p-2">{p.id}</td>
-                    <td className="border p-2">{p.nomeFicticio}</td>
-                    <td className="border p-2">{p.siglaDoenca}</td>
-                    <td className="border p-2">R$ {p.custoPorCamaMes.toLocaleString()}</td>
-                  </tr>
-                </Link>
+                <tr key={p.id} className="hover:bg-gray-100 cursor-pointer">
+                  <td className="border p-2">
+                    <Link href={`/pacientes/${p.id}`}>{p.id}</Link>
+                  </td>
+                  <td className="border p-2">{p.nomeFicticio}</td>
+                  <td className="border p-2">{p.siglaDoenca}</td>
+                  <td className="border p-2">R$ {p.custoPorCamaMes.toLocaleString()}</td>
+                  <td className="border p-2 space-x-2">
+                    <Link href={`/pacientes/${p.id}/edit`} className="text-blue-600 hover:underline">
+                      Editar
+                    </Link>
+                    <button
+                      className="text-red-600 hover:underline"
+                      onClick={async () => {
+                        if (confirm("Excluir paciente?")) {
+                          await fetch(`/api/pacientes?id=${p.id}`, { method: "DELETE" });
+                          setPacientes(curr => curr.filter(x => x.id !== p.id));
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>

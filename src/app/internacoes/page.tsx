@@ -40,15 +40,31 @@ export default function InternacoesPage() {
             </thead>
             <tbody>
               {internacoes.map(i => (
-                <Link key={i.internoId} href={`/internacoes/${i.internoId}`} legacyBehavior>
-                  <tr className="hover:bg-gray-100 cursor-pointer">
-                    <td className="border p-2">{i.internoId}</td>
-                    <td className="border p-2">{i.setor}</td>
-                    <td className="border p-2">{i.cama}</td>
-                    <td className="border p-2">{i.dataAdmissao}</td>
-                    <td className="border p-2">{i.dataPrevisaoAlta}</td>
-                  </tr>
-                </Link>
+                <tr key={i.internoId} className="hover:bg-gray-100 cursor-pointer">
+                  <td className="border p-2">
+                    <Link href={`/internacoes/${i.internoId}`}>{i.internoId}</Link>
+                  </td>
+                  <td className="border p-2">{i.setor}</td>
+                  <td className="border p-2">{i.cama}</td>
+                  <td className="border p-2">{i.dataAdmissao}</td>
+                  <td className="border p-2">{i.dataPrevisaoAlta}</td>
+                  <td className="border p-2 space-x-2">
+                    <Link href={`/internacoes/${i.internoId}/edit`} className="text-blue-600 hover:underline">
+                      Editar
+                    </Link>
+                    <button
+                      className="text-red-600 hover:underline"
+                      onClick={async () => {
+                        if (confirm("Excluir internação?")) {
+                          await fetch(`/api/internacoes?id=${i.internoId}`, { method: "DELETE" });
+                          setInternacoes(curr => curr.filter(x => x.internoId !== i.internoId));
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>

@@ -40,15 +40,31 @@ export default function RegistrosPage() {
             </thead>
             <tbody>
               {registros.map((r, idx) => (
-                <Link key={idx} href={`/registros/${idx}`} legacyBehavior>
-                  <tr className="hover:bg-gray-100 cursor-pointer">
-                    <td className="border p-2">{r.internoId}</td>
-                    <td className="border p-2">{r.dataHora}</td>
-                    <td className="border p-2">{r.tipoRegistro}</td>
-                    <td className="border p-2">{r.autor}</td>
-                    <td className="border p-2 text-xs whitespace-pre-wrap">{JSON.stringify(r.conteudo)}</td>
-                  </tr>
-                </Link>
+                <tr key={idx} className="hover:bg-gray-100 cursor-pointer">
+                  <td className="border p-2">
+                    <Link href={`/registros/${r.internoId}`}>{r.internoId}</Link>
+                  </td>
+                  <td className="border p-2">{r.dataHora}</td>
+                  <td className="border p-2">{r.tipoRegistro}</td>
+                  <td className="border p-2">{r.autor}</td>
+                  <td className="border p-2 text-xs whitespace-pre-wrap">{JSON.stringify(r.conteudo)}</td>
+                  <td className="border p-2 space-x-2">
+                    <Link href={`/registros/${r.internoId}/edit`} className="text-blue-600 hover:underline">
+                      Editar
+                    </Link>
+                    <button
+                      className="text-red-600 hover:underline"
+                      onClick={async () => {
+                        if (confirm("Excluir registro?")) {
+                          await fetch(`/api/registros?id=${r.internoId}`, { method: "DELETE" });
+                          setRegistros(curr => curr.filter(x => x.internoId !== r.internoId));
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
