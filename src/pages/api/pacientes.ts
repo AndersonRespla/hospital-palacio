@@ -14,7 +14,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { method, query, body } = req;
   const id = typeof query.id === "string" ? query.id : "";
   if (method === "GET" && !id) {
-    return res.status(200).json(db);
+    const { page = "1", limit = "10", search = "" } = req.query;
+    const pg = parseInt(page as string, 10);
+    const lim = parseInt(limit as string, 10);
+    let items = db.filter(item => {
+      const term = (item.nomeFicticio || item.id).toLowerCase();
+      return term.includes((search as string).toLowerCase());
+    });
+    const total = items.length;
+    const lastPage = Math.ceil(total / lim);
+    const start = (pg - 1) * lim;
+    items = items.slice(start, start + lim);
+    return res.status(200).json({ data: items, total, page: pg, lastPage });
   }
   if (method === "GET" && id) {
     const item = db.find(p => p.id === id);
