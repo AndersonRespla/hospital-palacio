@@ -1,9 +1,16 @@
 import { internacoes } from "../../data/seed";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
 
 let db = [...internacoes];
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
   const { method, query, body } = req;
   const id = typeof query.id === "string" ? query.id : "";
   if (method === "GET" && !id) {
