@@ -9,6 +9,7 @@ const links = [
   { label: "Pacientes", href: "/pacientes" },
   { label: "Internações", href: "/internacoes" },
   { label: "Registros", href: "/registros" },
+  { label: "Financeiro", href: "/financeiro" },
 ];
 
 const Sidebar: React.FC = () => {

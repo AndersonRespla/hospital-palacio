@@ -2,6 +2,7 @@
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { pacientes } from "../../data/seed";
+import Link from "next/link";
 
 export default function PacientesPage() {
   return (
@@ -22,12 +23,14 @@ export default function PacientesPage() {
             </thead>
             <tbody>
               {pacientes.map(p => (
-                <tr key={p.id}>
-                  <td className="border p-2">{p.id}</td>
-                  <td className="border p-2">{p.nomeFicticio}</td>
-                  <td className="border p-2">{p.siglaDoenca}</td>
-                  <td className="border p-2">R$ {p.custoPorCamaMes.toLocaleString()}</td>
-                </tr>
+                <Link key={p.id} href={`/pacientes/${p.id}`} legacyBehavior>
+                  <tr className="hover:bg-gray-100 cursor-pointer">
+                    <td className="border p-2">{p.id}</td>
+                    <td className="border p-2">{p.nomeFicticio}</td>
+                    <td className="border p-2">{p.siglaDoenca}</td>
+                    <td className="border p-2">R$ {p.custoPorCamaMes.toLocaleString()}</td>
+                  </tr>
+                </Link>
               ))}
             </tbody>
           </table>

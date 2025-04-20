@@ -2,6 +2,7 @@
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { internacoes } from "../../data/seed";
+import Link from "next/link";
 
 export default function InternacoesPage() {
   return (
@@ -23,13 +24,15 @@ export default function InternacoesPage() {
             </thead>
             <tbody>
               {internacoes.map(i => (
-                <tr key={i.internoId}>
-                  <td className="border p-2">{i.internoId}</td>
-                  <td className="border p-2">{i.setor}</td>
-                  <td className="border p-2">{i.cama}</td>
-                  <td className="border p-2">{i.dataAdmissao}</td>
-                  <td className="border p-2">{i.dataPrevisaoAlta}</td>
-                </tr>
+                <Link key={i.internoId} href={`/internacoes/${i.internoId}`} legacyBehavior>
+                  <tr className="hover:bg-gray-100 cursor-pointer">
+                    <td className="border p-2">{i.internoId}</td>
+                    <td className="border p-2">{i.setor}</td>
+                    <td className="border p-2">{i.cama}</td>
+                    <td className="border p-2">{i.dataAdmissao}</td>
+                    <td className="border p-2">{i.dataPrevisaoAlta}</td>
+                  </tr>
+                </Link>
               ))}
             </tbody>
           </table>

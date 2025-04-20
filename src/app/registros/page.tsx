@@ -2,6 +2,7 @@
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { registros } from "../../data/seed";
+import Link from "next/link";
 
 export default function RegistrosPage() {
   return (
@@ -23,13 +24,15 @@ export default function RegistrosPage() {
             </thead>
             <tbody>
               {registros.map((r, idx) => (
-                <tr key={idx}>
-                  <td className="border p-2">{r.internoId}</td>
-                  <td className="border p-2">{r.dataHora}</td>
-                  <td className="border p-2">{r.tipoRegistro}</td>
-                  <td className="border p-2">{r.autor}</td>
-                  <td className="border p-2 text-xs whitespace-pre-wrap">{JSON.stringify(r.conteudo)}</td>
-                </tr>
+                <Link key={idx} href={`/registros/${idx}`} legacyBehavior>
+                  <tr className="hover:bg-gray-100 cursor-pointer">
+                    <td className="border p-2">{r.internoId}</td>
+                    <td className="border p-2">{r.dataHora}</td>
+                    <td className="border p-2">{r.tipoRegistro}</td>
+                    <td className="border p-2">{r.autor}</td>
+                    <td className="border p-2 text-xs whitespace-pre-wrap">{JSON.stringify(r.conteudo)}</td>
+                  </tr>
+                </Link>
               ))}
             </tbody>
           </table>
